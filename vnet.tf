@@ -10,24 +10,29 @@ resource "azurerm_network_security_group" "gp-sg" {
 }
 
 resource "azurerm_virtual_network" "gp-vnet" {
-  name                = "gp-vnet-centralindia"
   location            = azurerm_resource_group.rg-name.location
   resource_group_name = azurerm_resource_group.rg-name.name
-  address_space       = ["10.0.0.0/16"]
-  dns_servers         = ["10.0.0.4", "10.0.0.5"]
-
-  subnet {
-    name             = "gp-public-subnet1"
-    address_prefixes = ["10.0.1.0/24"]
-  }
-
-  subnet {
-    name             = "gp-private-subnet2"
-    address_prefixes = ["10.0.2.0/24"]
-    security_group   = azurerm_network_security_group.gp-sg.id
-  }
+  count               = length(var.vnet_address_space)
+  address_space       = var.vnet_address_space[count.index]
+  name                = "gp-vnet-centralindia-${count.index + 1}"
 
   tags = {
     environment = "Development"
   }
+}
+
+resource "azurerm_subnet" "public_subnet" {
+  count                = length(var.vnet_public_subnet_prefixes)
+  name                 = "public-subnet-${count.index + 1}"
+  resource_group_name  = azurerm_resource_group.rg-name.name
+  virtual_network_name = azurerm_virtual_network.gp-vnet[count.index].name
+  address_prefixes     = var.vnet_public_subnet_prefixes[count.index]
+}
+
+resource "azurerm_subnet" "private_subnet" {
+  count                = length(var.vnet_private_subnet_prefixes)
+  name                 = "private-subnet-${count.index + 1}"
+  resource_group_name  = azurerm_resource_group.rg-name.name
+  virtual_network_name = azurerm_virtual_network.gp-vnet[count.index].name
+  address_prefixes     = var.vnet_private_subnet_prefixes[count.index]
 }
