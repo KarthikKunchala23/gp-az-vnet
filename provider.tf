@@ -10,4 +10,6 @@ terraform {
 provider "azurerm" {
   # Configuration options
   features {}
+
+  resource_provider_registrations = "none"
 }
