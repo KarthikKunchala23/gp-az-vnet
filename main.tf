@@ -35,7 +35,8 @@ resource "azurerm_linux_virtual_machine" "gp-linux-vm" {
   name = "gp-linux-vm-${count.index + 1}"
   resource_group_name = azurerm_resource_group.rg-name.name
   location = azurerm_resource_group.rg-name.location
-  size = "Standard_DS1_v2"
+  disable_password_authentication = false
+  size = "Standard_B1s"
   admin_username = "linuxadmin"
   admin_password = var.admin_password
   network_interface_ids = [azurerm_network_interface.gp_nic[count.index].id]
