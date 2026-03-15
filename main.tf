@@ -30,6 +30,12 @@ resource "azurerm_network_interface" "gp_nic" {
   }
 }
 
+resource "azurerm_network_interface_security_group_association" "gp_nic_sg_assoc" {
+  count = length(azurerm_network_interface.gp_nic)
+  network_interface_id = azurerm_network_interface.gp_nic[count.index].id
+  network_security_group_id = azurerm_network_security_group.gp-sg.id
+}
+
 resource "azurerm_linux_virtual_machine" "gp-linux-vm" {
   count = length(azurerm_subnet.public_subnet)
   name = "gp-linux-vm-${count.index + 1}"
