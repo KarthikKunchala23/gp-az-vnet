@@ -16,7 +16,7 @@ resource "azurerm_network_security_group" "gp-sg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "22"
-    source_address_prefix      = "192.168.1.17/32"
+    source_address_prefix      = "115.98.181.82/32"
     destination_address_prefix = "*"
   }
 
